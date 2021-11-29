@@ -1,0 +1,69 @@
+<article>
+  <h2>Insurance Policy</h2>
+  <article class="table-header">
+    <button class="button-add-row" mat-button (click)="addRow()">
+      Add Policy
+    </button>
+  </article>
+  <table mat-table [dataSource]="dataSource">
+    <ng-container [matColumnDef]="col" *ngFor="let col of displayedColumns">
+      <th mat-header-cell *matHeaderCellDef>
+        <span *ngIf="col !== 'isEdit'">
+          {{ col }}
+        </span>
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <div [ngSwitch]="dataSchema[col]" *ngIf="!element.isEdit">
+          <div class="btn-edit" *ngSwitchCase="'isEdit'">
+            <button
+              mat-button
+              class="button-remove"
+              (click)="removeRow(element.id)"
+            >
+              Delete
+            </button>
+            <button (click)="element.isEdit = !element.isEdit">Edit</button>
+          </div>
+          <span *ngSwitchDefault>
+            {{ element[col] }}
+          </span>
+        </div>
+        <div [ngSwitch]="dataSchema[col]" *ngIf="element.isEdit">
+          <div class="btn-edit" *ngSwitchCase="'isEdit'">
+            <button (click)="editRow(element)">Done</button>
+          </div>
+          <mat-form-field *ngSwitchDefault>
+            <mat-label>{{ col }}</mat-label>
+            <input
+              [type]="dataSchema[col]"
+              matInput
+              *ngIf="
+                col !== 'startDate' && col !== 'endDate' && col !== 'dateBirth'
+              "
+              [(ngModel)]="element[col]"
+            />
+            <input
+              [type]="dataSchema[col]"
+              matInput
+              *ngIf="
+                col === 'startDate' || col === 'endDate' || col === 'dateBirth'
+              "
+              [matDatepicker]="picker"
+              [(ngModel)]="element[col]"
+            />
+            <mat-datepicker-toggle
+              *ngIf="
+                col === 'startDate' || col === 'endDate' || col === 'dateBirth'
+              "
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</article>
